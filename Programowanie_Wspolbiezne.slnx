@@ -1,4 +1,6 @@
 <Solution>
+  <Project Path="Dane/Dane.csproj" Id="c73970a8-ebf2-4bb6-b2ec-93dc8d39b244" />
+  <Project Path="Logika/Logika.csproj" Id="010667b6-4f9f-48f3-8588-82f58dd3a60e" />
   <Project Path="Model/Model.csproj" Id="8e3886a3-445a-4985-b70e-c9c17b673128" />
   <Project Path="Programowanie_Wspolbiezne/Programowanie_Wspolbiezne.csproj" />
   <Project Path="ViewModel/ViewModel.csproj" Id="11b04965-30f8-4945-8cdb-d5d0c3e459e0" />
