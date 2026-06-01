@@ -361,3 +361,6 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+/Dane/Models/Ball.cs
+/Dane/Models/Ball.cs
+/Dane/Models/Table.cs

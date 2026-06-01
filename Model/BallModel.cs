@@ -48,7 +48,6 @@ namespace Model
             }
         }
 
-        
         public double Diameter => Radius * 2;
 
         public event PropertyChangedEventHandler? PropertyChanged;

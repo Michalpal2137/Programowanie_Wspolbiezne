@@ -18,11 +18,11 @@ namespace ViewModel
         private bool _isSimulationRunning;
         private double _tableWidth = 800;
         private double _tableHeight = 600;
-        
+
         public ObservableCollection<BallModel> Balls { get; private set; }
-        
+
         public event PropertyChangedEventHandler? PropertyChanged;
-        
+
         public int BallCount
         {
             get => _ballCount;
@@ -35,7 +35,7 @@ namespace ViewModel
                 }
             }
         }
-        
+
         public bool IsSimulationRunning
         {
             get => _isSimulationRunning;
@@ -51,7 +51,7 @@ namespace ViewModel
                 }
             }
         }
-        
+
         public double TableWidth
         {
             get => _tableWidth;
@@ -61,7 +61,7 @@ namespace ViewModel
                 OnPropertyChanged(nameof(TableWidth));
             }
         }
-        
+
         public double TableHeight
         {
             get => _tableHeight;
@@ -71,72 +71,71 @@ namespace ViewModel
                 OnPropertyChanged(nameof(TableHeight));
             }
         }
-        
+
         public ICommand StartCommand { get; private set; }
         public ICommand StopCommand { get; private set; }
         public ICommand CreateBallsCommand { get; private set; }
-        
+
         public MainViewModel(IBallService ballService)
         {
             _ballService = ballService ?? throw new ArgumentNullException(nameof(ballService));
             _dispatcher = Dispatcher.CurrentDispatcher;
             Balls = new ObservableCollection<BallModel>();
-            
+
             StartCommand = new RelayCommand(StartSimulation, () => !IsSimulationRunning);
             StopCommand = new RelayCommand(StopSimulation, () => IsSimulationRunning);
             CreateBallsCommand = new RelayCommand(CreateBalls, () => !IsSimulationRunning);
-            
+
             var dimensions = _ballService.GetTableDimensions();
             TableWidth = dimensions.Width;
             TableHeight = dimensions.Height;
-            
+
             _ballService.BallsUpdated += OnBallsUpdated;
         }
-        
+
         private async void StartSimulation()
         {
+            _ballService.StartSimulation(16); // ~60 FPS
             IsSimulationRunning = true;
             await System.Threading.Tasks.Task.Run(() => _ballService.StartSimulation(16));
         }
-        
-        private async void StopSimulation()
+
         {
-            await System.Threading.Tasks.Task.Run(() => _ballService.StopSimulation());
             IsSimulationRunning = false;
         }
-        
+
         private void CreateBalls()
         {
             _ballService.CreateBalls(_ballCount);
-            
+
+            // Wyczyść kolekcję w wątku UI
             _dispatcher.Invoke(() => Balls.Clear());
         }
-        
+
         private void OnBallsUpdated(IEnumerable<(double X, double Y, double Radius)> ballsData)
         {
             var ballsList = ballsData.ToList();
-            
+
             _dispatcher.Invoke(() =>
             {
                 while (Balls.Count < ballsList.Count)
                 {
                     Balls.Add(new BallModel());
                 }
-                
+
                 while (Balls.Count > ballsList.Count)
                 {
                     Balls.RemoveAt(Balls.Count - 1);
                 }
-                
+
                 for (int i = 0; i < ballsList.Count; i++)
                 {
                     Balls[i].X = ballsList[i].X;
                     Balls[i].Y = ballsList[i].Y;
-                    Balls[i].Radius = ballsList[i].Radius;
                 }
             });
         }
-        
+
         protected virtual void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));

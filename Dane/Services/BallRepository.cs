@@ -20,24 +20,24 @@ namespace Dane
         {
             lock (_lock)
             {
-                _balls.Add(ball);
-            }
+            _balls.Add(ball);
+        }
         }
 
         public void RemoveBall(Ball ball)
         {
             lock (_lock)
             {
-                _balls.Remove(ball);
-            }
+            _balls.Remove(ball);
+        }
         }
 
         public IEnumerable<Ball> GetAllBalls()
         {
             lock (_lock)
             {
-                return _balls.ToList();
-            }
+            return _balls.ToList();
+        }
         }
 
         public void Clear()
@@ -45,8 +45,8 @@ namespace Dane
             StopAllBalls();
             lock (_lock)
             {
-                _balls.Clear();
-            }
+            _balls.Clear();
+        }
         }
 
         public void UpdateBallPosition(Ball ball, double x, double y)
