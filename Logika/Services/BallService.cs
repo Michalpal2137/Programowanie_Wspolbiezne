@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Dane;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -11,9 +12,6 @@ namespace Logika
     {
         private readonly IBallRepository _repository;
         private readonly Random _random;
-        private readonly object _collisionLock = new object();
-        private CancellationTokenSource? _collisionCheckToken;
-        private Task? _collisionCheckTask;
         private double _minVelocity = 30;
         private double _maxVelocity = 100;
 
@@ -33,18 +31,12 @@ namespace Logika
 
             for (int i = 0; i < count; i++)
             {
-                double x = radius + _random.NextDouble() * (table.Width - 2 * radius);
-                double y = radius + _random.NextDouble() * (table.Height - 2 * radius);
 
                 double velocityX = (_random.NextDouble() * 2 - 1) *
                                    (_minVelocity + _random.NextDouble() * (_maxVelocity - _minVelocity));
                 double velocityY = (_random.NextDouble() * 2 - 1) *
                                    (_minVelocity + _random.NextDouble() * (_maxVelocity - _minVelocity));
 
-                double mass = radius * radius;
-
-                var ball = new Ball(x, y, radius, mass, velocityX, velocityY);
-                ball.PositionChanged += OnBallPositionChanged;
                 _repository.AddBall(ball);
             }
         }
@@ -61,109 +53,78 @@ namespace Logika
 
         public void StartSimulation(double intervalMs)
         {
-            StopSimulation();
 
-            
-            _repository.StartAllBalls(intervalMs);
-
-            
-            _collisionCheckToken = new CancellationTokenSource();
-            var token = _collisionCheckToken.Token;
-
-            _collisionCheckTask = Task.Run(async () =>
+        {
             {
-                while (!token.IsCancellationRequested)
-                {
-                    CheckCollisions();
-                    try
-                    {
-                        await Task.Delay((int)intervalMs, token);
-                    }
-                    catch (TaskCanceledException)
-                    {
-                        break;
-                    }
+            }
+        {
+        }
                 }
             }, token);
         }
 
-        public void StopSimulation()
         {
-            _repository.StopAllBalls();
 
-            if (_collisionCheckToken != null)
             {
-                _collisionCheckToken.Cancel();
-                _collisionCheckToken.Dispose();
-                _collisionCheckToken = null;
-                _collisionCheckTask = null;
-            }
-        }
-
-        private void CheckCollisions()
-        {
-            lock (_collisionLock)
-            {
-                var balls = _repository.GetAllBalls().ToList();
-
-                for (int i = 0; i < balls.Count; i++)
-                {
-                    for (int j = i + 1; j < balls.Count; j++)
-                    {
-                        HandleCollision(balls[i], balls[j]);
-                    }
                 }
+                else if (newX + ball.Radius > table.Width)
+                {
+                    ball.VelocityX = -Math.Abs(ball.VelocityX);
+                    newX = table.Width - ball.Radius;
+                }
+
+                {
+                {
+
+                _repository.UpdateBallPosition(ball, newX, newY);
             }
-        }
+            // Kolizje między kulami
+            for (int i = 0; i < balls.Count; i++)
+            {
+                for (int j = i + 1; j < balls.Count; j++)
+                {
 
         private void HandleCollision(Ball ball1, Ball ball2)
         {
-            double dx = ball2.X - ball1.X;
-            double dy = ball2.Y - ball1.Y;
-            double distance = Math.Sqrt(dx * dx + dy * dy);
-            double minDistance = ball1.Radius + ball2.Radius;
+                    double dx = ball2.X - ball1.X;
+                    double dy = ball2.Y - ball1.Y;
+                    double distance = Math.Sqrt(dx * dx + dy * dy);
+                    double minDistance = ball1.Radius + ball2.Radius;
 
-            if (distance < minDistance && distance > 0.0001)
-            {
-                double nx = dx / distance;
-                double ny = dy / distance;
+                    {
+                        // Wektor normalny kolizji
+                        double nx = dx / distance;
+                        double ny = dy / distance;
 
-                double dvx = ball1.VelocityX - ball2.VelocityX;
-                double dvy = ball1.VelocityY - ball2.VelocityY;
-                double vn = dvx * nx + dvy * ny;
+                        // Względna prędkość
+                        double dvx = ball1.VelocityX - ball2.VelocityX;
+                        double dvy = ball1.VelocityY - ball2.VelocityY;
 
-                if (vn > 0)
-                {
-                    double m1 = ball1.Mass;
-                    double m2 = ball2.Mass;
-                    double impulse = 2 * vn / (m1 + m2);
+                        // Prędkość względna w kierunku normalnym
+                        double vn = dvx * nx + dvy * ny;
 
-                    ball1.VelocityX -= impulse * m2 * nx;
-                    ball1.VelocityY -= impulse * m2 * ny;
-                    ball2.VelocityX += impulse * m1 * nx;
-                    ball2.VelocityY += impulse * m1 * ny;
+                        // Nie rób nic jeśli kule się oddalają
+                        if (vn > 0)
+                        {
 
-                    double overlap = minDistance - distance;
-                    double totalMass = m1 + m2;
-
-                    ball1.X -= overlap * (m2 / totalMass) * nx;
-                    ball1.Y -= overlap * (m2 / totalMass) * ny;
-                    ball2.X += overlap * (m1 / totalMass) * nx;
-                    ball2.Y += overlap * (m1 / totalMass) * ny;
+                            // Rozepchnij kule
+                            double overlap = minDistance - distance;
+                    }
                 }
             }
-        }
 
         private void OnBallPositionChanged()
         {
             var ballData = new List<(double X, double Y, double Radius)>();
-            foreach (var ball in _repository.GetAllBalls())
             {
                 ballData.Add((ball.X, ball.Y, ball.Radius));
             }
 
             BallsUpdated?.Invoke(ballData);
         }
+            
+
+
 
         public (double Width, double Height) GetTableDimensions()
         {
