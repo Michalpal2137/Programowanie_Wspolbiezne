@@ -1,6 +1,8 @@
 <Solution>
   <Project Path="Dane/Dane.csproj" Id="c73970a8-ebf2-4bb6-b2ec-93dc8d39b244" />
+  <Project Path="DaneTesty/DaneTesty.csproj" Id="893e9ebb-673d-4bfe-96f5-6a71bb4bbcba" />
   <Project Path="Logika/Logika.csproj" Id="010667b6-4f9f-48f3-8588-82f58dd3a60e" />
+  <Project Path="LogikaTesty/LogikaTesty.csproj" Id="760f3cf8-4d59-4a7e-96c7-0fa9de4c1ca9" />
   <Project Path="Model/Model.csproj" Id="8e3886a3-445a-4985-b70e-c9c17b673128" />
   <Project Path="Programowanie_Wspolbiezne/Programowanie_Wspolbiezne.csproj" />
   <Project Path="View/View.csproj" Id="bcc30905-02b0-421a-8aad-d0fa2c94abec" />
