@@ -45,6 +45,10 @@ namespace ViewModel
                 {
                     _isSimulationRunning = value;
                     OnPropertyChanged(nameof(IsSimulationRunning));
+                    // Odśwież komendy
+                    ((RelayCommand)StartCommand).RaiseCanExecuteChanged();
+                    ((RelayCommand)StopCommand).RaiseCanExecuteChanged();
+                    ((RelayCommand)CreateBallsCommand).RaiseCanExecuteChanged();
                 }
             }
         }
@@ -90,15 +94,15 @@ namespace ViewModel
             _ballService.BallsUpdated += OnBallsUpdated;
         }
 
-        private void StartSimulation()
+        private async void StartSimulation()
         {
-            _ballService.StartSimulation(16); // ~60 FPS
             IsSimulationRunning = true;
+            await System.Threading.Tasks.Task.Run(() => _ballService.StartSimulation(16));
         }
 
-        private void StopSimulation()
+        private async void StopSimulation()
         {
-            _ballService.StopSimulation();
+            await System.Threading.Tasks.Task.Run(() => _ballService.StopSimulation());
             IsSimulationRunning = false;
         }
 
@@ -106,7 +110,6 @@ namespace ViewModel
         {
             _ballService.CreateBalls(_ballCount);
 
-            // Wyczyść kolekcję w wątku UI
             _dispatcher.Invoke(() => Balls.Clear());
         }
 
@@ -130,7 +133,7 @@ namespace ViewModel
                 {
                     Balls[i].X = ballsList[i].X;
                     Balls[i].Y = ballsList[i].Y;
-                    Balls[i].Radius = ballsList[i].Radius; // To automatycznie wywoła OnPropertyChanged dla Diameter
+                    Balls[i].Radius = ballsList[i].Radius;
                 }
             });
         }

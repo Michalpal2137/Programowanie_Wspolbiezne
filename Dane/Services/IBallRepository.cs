@@ -10,5 +10,7 @@ namespace Dane
         void Clear();
         void UpdateBallPosition(Ball ball, double x, double y);
         Table GetTable();
+        void StartAllBalls(double intervalMs);
+        void StopAllBalls();
     }
 }

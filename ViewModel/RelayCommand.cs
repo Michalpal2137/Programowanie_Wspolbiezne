@@ -29,5 +29,10 @@ namespace ViewModel
         {
             _execute();
         }
+
+        public void RaiseCanExecuteChanged()
+        {
+            CommandManager.InvalidateRequerySuggested();
+        }
     }
 }

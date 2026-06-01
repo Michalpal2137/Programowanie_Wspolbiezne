@@ -8,6 +8,7 @@ namespace Dane
     {
         private readonly ObservableCollection<Ball> _balls;
         private readonly Table _table;
+        private readonly object _lock = new object();
 
         public BallRepository(double tableWidth, double tableHeight)
         {
@@ -17,22 +18,35 @@ namespace Dane
 
         public void AddBall(Ball ball)
         {
-            _balls.Add(ball);
+            lock (_lock)
+            {
+                _balls.Add(ball);
+            }
         }
 
         public void RemoveBall(Ball ball)
         {
-            _balls.Remove(ball);
+            lock (_lock)
+            {
+                _balls.Remove(ball);
+            }
         }
 
         public IEnumerable<Ball> GetAllBalls()
         {
-            return _balls.ToList();
+            lock (_lock)
+            {
+                return _balls.ToList();
+            }
         }
 
         public void Clear()
         {
-            _balls.Clear();
+            StopAllBalls();
+            lock (_lock)
+            {
+                _balls.Clear();
+            }
         }
 
         public void UpdateBallPosition(Ball ball, double x, double y)
@@ -44,6 +58,27 @@ namespace Dane
         public Table GetTable()
         {
             return _table;
+        }
+
+        public void StartAllBalls(double intervalMs)
+        {
+            var table = GetTable();
+            var balls = GetAllBalls();
+
+            foreach (var ball in balls)
+            {
+                ball.StartMoving(table, intervalMs);
+            }
+        }
+
+        public void StopAllBalls()
+        {
+            var balls = GetAllBalls();
+
+            foreach (var ball in balls)
+            {
+                ball.StopMoving();
+            }
         }
     }
 }
