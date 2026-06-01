@@ -1,10 +1,16 @@
 <Solution>
   <Project Path="Dane/Dane.csproj" Id="c73970a8-ebf2-4bb6-b2ec-93dc8d39b244" />
-  <Project Path="DaneTesty/DaneTesty.csproj" Id="66f16dd1-a1be-4ac3-8b55-4f6101c6a32e" />
+  <Project Path="DaneTesty/DaneTesty.csproj" Id="66f16dd1-a1be-4ac3-8b55-4f6101c6a32e">
+    <Build Solution="Debug|*" Project="false" />
+  </Project>
   <Project Path="Logika/Logika.csproj" Id="010667b6-4f9f-48f3-8588-82f58dd3a60e" />
-  <Project Path="LogikaTesty/LogikaTesty.csproj" Id="d03d84e5-4699-4afc-85e5-39c0989d1214" />
+  <Project Path="LogikaTesty/LogikaTesty.csproj" Id="d03d84e5-4699-4afc-85e5-39c0989d1214">
+    <Build Solution="Debug|*" Project="false" />
+  </Project>
   <Project Path="Model/Model.csproj" Id="8e3886a3-445a-4985-b70e-c9c17b673128" />
   <Project Path="Programowanie_Wspolbiezne/Programowanie_Wspolbiezne.csproj" />
-  <Project Path="View/View.csproj" Id="991720b4-9cfd-4a3a-8395-7e30b4241ba5" />
+  <Project Path="View/View.csproj" Id="991720b4-9cfd-4a3a-8395-7e30b4241ba5">
+    <Build Solution="Debug|*" Project="false" />
+  </Project>
   <Project Path="ViewModel/ViewModel.csproj" Id="11b04965-30f8-4945-8cdb-d5d0c3e459e0" />
 </Solution>
