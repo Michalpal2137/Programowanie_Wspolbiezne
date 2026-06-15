@@ -51,8 +51,7 @@ namespace Dane
 
         public void UpdateBallPosition(Ball ball, double x, double y)
         {
-            ball.X = x;
-            ball.Y = y;
+            ball.SetPosition(x, y);
         }
 
         public Table GetTable()

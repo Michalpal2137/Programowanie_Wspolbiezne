@@ -11,7 +11,7 @@ namespace DaneTesty
         {
             // Arrange
             var repository = new BallRepository(800, 600);
-            var ball = new Ball(100, 200, 15, 10, 5);
+            var ball = new Ball(100, 200, 15, 225, 10, 5);
 
             // Act
             repository.AddBall(ball);
@@ -27,9 +27,9 @@ namespace DaneTesty
             var repository = new BallRepository(800, 600);
 
             // Act
-            repository.AddBall(new Ball(100, 200, 15, 10, 5));
-            repository.AddBall(new Ball(300, 400, 20, 5, 10));
-            repository.AddBall(new Ball(500, 100, 10, -5, 15));
+            repository.AddBall(new Ball(100, 200, 15, 225, 10, 5));
+            repository.AddBall(new Ball(300, 400, 20, 400, 5, 10));
+            repository.AddBall(new Ball(500, 100, 10, 100, -5, 15));
 
             // Assert
             Assert.Equal(3, repository.GetAllBalls().Count());
@@ -40,8 +40,8 @@ namespace DaneTesty
         {
             // Arrange
             var repository = new BallRepository(800, 600);
-            repository.AddBall(new Ball(100, 200, 15, 10, 5));
-            repository.AddBall(new Ball(300, 400, 20, 5, 10));
+            repository.AddBall(new Ball(100, 200, 15, 225, 10, 5));
+            repository.AddBall(new Ball(300, 400, 20, 400, 5, 10));
 
             // Act
             repository.Clear();
@@ -55,7 +55,7 @@ namespace DaneTesty
         {
             // Arrange
             var repository = new BallRepository(800, 600);
-            var ball = new Ball(100, 200, 15, 10, 5);
+            var ball = new Ball(100, 200, 15, 225, 10, 5);
             repository.AddBall(ball);
 
             // Act
@@ -72,8 +72,8 @@ namespace DaneTesty
         {
             // Arrange
             var repository = new BallRepository(800, 600);
-            var ball1 = new Ball(100, 200, 15, 10, 5);
-            var ball2 = new Ball(300, 400, 20, 5, 10);
+            var ball1 = new Ball(100, 200, 15, 225, 10, 5);
+            var ball2 = new Ball(300, 400, 20, 400, 5, 10);
             repository.AddBall(ball1);
             repository.AddBall(ball2);
 

@@ -48,7 +48,7 @@ namespace Model
             }
         }
 
-        // Dodaj właściwość dla średnicy (2 × promień)
+        
         public double Diameter => Radius * 2;
 
         public event PropertyChangedEventHandler? PropertyChanged;

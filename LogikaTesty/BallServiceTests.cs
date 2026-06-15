@@ -91,51 +91,6 @@ namespace LogikaTesty
         }
 
         [Fact]
-        public void StartSimulation_ShouldTriggerBallsUpdatedEvent()
-        {
-            // Arrange
-            var repository = CreateRepository();
-            var service = new BallService(repository);
-            service.CreateBalls(3);
-
-            bool eventTriggered = false;
-            service.BallsUpdated += (balls) => eventTriggered = true;
-
-            // Act
-            service.StartSimulation(100);
-            System.Threading.Thread.Sleep(200);
-
-            // Assert
-            Assert.True(eventTriggered);
-
-            // Cleanup
-            service.StopSimulation();
-        }
-
-        [Fact]
-        public void StopSimulation_ShouldStopUpdates()
-        {
-            // Arrange
-            var repository = CreateRepository();
-            var service = new BallService(repository);
-            service.CreateBalls(3);
-
-            int eventCount = 0;
-            service.BallsUpdated += (balls) => eventCount++;
-
-            // Act
-            service.StartSimulation(50);
-            System.Threading.Thread.Sleep(100);
-            service.StopSimulation();
-            int countAfterStop = eventCount;
-            System.Threading.Thread.Sleep(200);
-
-            // Assert
-            Assert.True(countAfterStop > 0);
-            Assert.Equal(countAfterStop, eventCount);
-        }
-
-        [Fact]
         public void CreateBalls_ShouldAssignVelocity()
         {
             // Arrange

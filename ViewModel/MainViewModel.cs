@@ -16,8 +16,10 @@ namespace ViewModel
         private readonly Dispatcher _dispatcher;
         private int _ballCount = 10;
         private bool _isSimulationRunning;
+        private bool _isDiagnosticsEnabled;
         private double _tableWidth = 800;
         private double _tableHeight = 600;
+        
 
         public ObservableCollection<BallModel> Balls { get; private set; }
 
@@ -45,11 +47,41 @@ namespace ViewModel
                 {
                     _isSimulationRunning = value;
                     OnPropertyChanged(nameof(IsSimulationRunning));
-                    // Odśwież komendy
                     ((RelayCommand)StartCommand).RaiseCanExecuteChanged();
                     ((RelayCommand)StopCommand).RaiseCanExecuteChanged();
                     ((RelayCommand)CreateBallsCommand).RaiseCanExecuteChanged();
                 }
+            }
+        }
+
+        public bool IsDiagnosticsEnabled
+        {
+            get => _isDiagnosticsEnabled;
+            set
+            {
+                if (_isDiagnosticsEnabled != value)
+                {
+                    _isDiagnosticsEnabled = value;
+                    OnPropertyChanged(nameof(IsDiagnosticsEnabled));
+                    OnPropertyChanged(nameof(DiagnosticStatus));
+                }
+            }
+        }
+
+        public string DiagnosticStatus
+        {
+            get
+            {
+                if (IsDiagnosticsEnabled)
+                {
+                    var summary = _ballService.GetDiagnosticSummary();
+                    if (summary != null)
+                    {
+                        return $"Kl: {summary.TotalFrames} | Śr: {summary.AverageDeltaTime:F1}ms | " +
+                               $"Pominięte: {summary.DeadlinesMissed} | Kol: {summary.CurrentQueueSize}";
+                    }
+                }
+                return "Diagnostyka wyłączona";
             }
         }
 
@@ -76,6 +108,8 @@ namespace ViewModel
         public ICommand StartCommand { get; private set; }
         public ICommand StopCommand { get; private set; }
         public ICommand CreateBallsCommand { get; private set; }
+        public ICommand ToggleDiagnosticsCommand { get; private set; }
+        public ICommand RefreshDiagnosticsCommand { get; private set; }
 
         public MainViewModel(IBallService ballService)
         {
@@ -86,6 +120,8 @@ namespace ViewModel
             StartCommand = new RelayCommand(StartSimulation, () => !IsSimulationRunning);
             StopCommand = new RelayCommand(StopSimulation, () => IsSimulationRunning);
             CreateBallsCommand = new RelayCommand(CreateBalls, () => !IsSimulationRunning);
+            ToggleDiagnosticsCommand = new RelayCommand(ToggleDiagnostics);
+            RefreshDiagnosticsCommand = new RelayCommand(RefreshDiagnostics);
 
             var dimensions = _ballService.GetTableDimensions();
             TableWidth = dimensions.Width;
@@ -109,8 +145,26 @@ namespace ViewModel
         private void CreateBalls()
         {
             _ballService.CreateBalls(_ballCount);
-
             _dispatcher.Invoke(() => Balls.Clear());
+        }
+
+        private void ToggleDiagnostics()
+        {
+            if (IsDiagnosticsEnabled)
+            {
+                _ballService.DisableDiagnostics();
+                IsDiagnosticsEnabled = false;
+            }
+            else
+            {
+                _ballService.EnableDiagnostics();
+                IsDiagnosticsEnabled = true;
+            }
+        }
+
+        private void RefreshDiagnostics()
+        {
+            OnPropertyChanged(nameof(DiagnosticStatus));
         }
 
         private void OnBallsUpdated(IEnumerable<(double X, double Y, double Radius)> ballsData)
@@ -134,6 +188,12 @@ namespace ViewModel
                     Balls[i].X = ballsList[i].X;
                     Balls[i].Y = ballsList[i].Y;
                     Balls[i].Radius = ballsList[i].Radius;
+                }
+
+                
+                if (IsDiagnosticsEnabled)
+                {
+                    OnPropertyChanged(nameof(DiagnosticStatus));
                 }
             });
         }
